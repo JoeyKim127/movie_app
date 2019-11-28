@@ -1,47 +1,47 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './App.css';
 import Movie from './Movie';
 
+class App extends Component {
 
-const movies = [
-  {
-    title:  "john",
-    poster: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d4/Mickey_Mouse.png/220px-Mickey_Mouse.png",
-  },
-  {
-    title: "mary",
-    poster: "https://img.etimg.com/thumb/msid-58980445,width-643,imgsize-182458,resizemode-4/some-fun-facts-about-disneys-most-popular-character-donald-duck.jpg",
- 
-  },
-  {
-    title:"sam",
-    poster:  "https://upload.wikimedia.org/wikipedia/en/6/6d/Plutodog.gif",
-  },
-  {
-    title:   "belle", 
-    poster: "https://lumiere-a.akamaihd.net/v1/images/ct_mickeymouseandfriends_minnie_ddt-16970_3_4a2aa999.jpeg?region=0,0,600,600&width=480",
-  },
-]
+state = {}
 
-class App extends Components {
-
-  state = {
-    greeting: 'hello'
+    componentDidMount() {
+     this._getMovies();
   }
 
+  _renderMovies = () => {
+    const movies = this.state.movies.map((movie) => {
+      // console.log(movie)
+       return <Movie title={movie.title} poster={movie.medium_cover_image} key={movie.id} />
+    })
+       return movies
+  }
+   
+   _getMovies = async () => {
+    const movies = await this._callApi()
+    this.setState({
+      movies
+      
+    }) 
+  }
+
+  _callApi = () => {
+     return fetch("https://yts.lt/api/v2/list_movies.json?sort_by=rating")
+      // call the response object
+      // .then(movie => console.log(movie))
+      // make the reponse object valid json type
+      .then(movie => movie.json())
+      .then(json => json.data.movies)
+      .catch(err => console.log(err))
+  }
 
   render() {
   return (
     <div className="App">
-     {movies.map((movie, index) => {
-       return <Movie title={movie.title} poster={movie.poster} key={index} />
-
-     })}
-
-    
-
+      {this.state.movies ? this._renderMovies() : "loading" }
     </div>
   );
 };
-
+  }
 export default App;
